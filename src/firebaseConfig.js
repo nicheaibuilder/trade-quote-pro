@@ -10,7 +10,6 @@ const firebaseConfig = {
   storageBucket: "tradequote-pro-app.firebasestorage.app",
   messagingSenderId: "410108716114",
   appId: "1:410108716114:web:6a6161ad117f967bed6b8b",
-  measurementId: "G-24NZBXNKJX"
 };
 
 const app = initializeApp(firebaseConfig);

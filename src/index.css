@@ -8,16 +8,10 @@ body {
   background-color: #f7fafc;
 }
 
-/* Add some basic button styling */
 button {
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  transition: opacity 0.2s;
+  cursor: pointer; border: none; border-radius: 6px;
+  padding: 0.6rem 1.2rem; font-weight: 600; transition: opacity 0.2s;
 }
 
-button:hover {
-  opacity: 0.85;
-}
+button:hover { opacity: 0.85; }
+input, select { padding: 0.75rem; border-radius: 6px; border: 1px solid #cbd5e0; }

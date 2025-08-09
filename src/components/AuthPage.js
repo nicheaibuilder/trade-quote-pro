@@ -18,12 +18,15 @@ export default function AuthPage() {
             } else {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                // Create a document for the new user in Firestore
+                // Create a document for the new user in Firestore with all data structures
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
                     createdAt: new Date(),
-                    profile: { companyName: "Your Company Name" },
-                    quotes: [], invoices: [], clients: [], items: []
+                    profile: { companyName: "Your Company Name", address: "", phone: "" },
+                    quotes: [],
+                    invoices: [],
+                    clients: [],
+                    items: []
                 });
             }
         } catch (err) {
