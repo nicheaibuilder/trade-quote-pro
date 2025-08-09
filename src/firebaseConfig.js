@@ -2,8 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// ⚠️ IMPORTANT: Replace these placeholders with your actual keys 
-// from your Firebase project settings.
+// ⚠️ IMPORTANT: Replace these with your actual keys from the Firebase Console
 const firebaseConfig = {
   apiKey: "AIzaSyC1RsWA6zbRGLUOk7tgNAZusY-bH6Y-fs8",
   authDomain: "tradequote-pro-app.firebaseapp.com",
@@ -14,9 +13,6 @@ const firebaseConfig = {
   measurementId: "G-24NZBXNKJX"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Export the services you'll need
 export const auth = getAuth(app);
 export const db = getFirestore(app);
