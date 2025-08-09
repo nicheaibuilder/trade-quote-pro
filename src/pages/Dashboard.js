@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ClientEditor from '../components/ClientEditor';
 import ItemEditor from '../components/ItemEditor';
-import InvoiceStatusBadge from '../components/InvoiceStatusBadge'; // New import
+import InvoiceStatusBadge from '../components/InvoiceStatusBadge';
 
 const StatCard = ({ title, value }) => ( <div style={{background:'white', padding:'1.5rem', borderRadius:'12px', boxShadow:'0 4px 6px -1px rgba(0,0,0,0.1)'}}><h3 style={{margin:0, color:'#a0aec0', fontSize:'0.9rem', textTransform:'uppercase'}}>{title}</h3><p style={{margin:'0.5rem 0 0 0', color:'#1a20c', fontSize:'2.25rem', fontWeight:'700'}}>{value}</p></div> );
 const StatusBadge = ({ status }) => { const colors = { Draft: { bg: '#e2e8f0', text: '#4a5568' }, Sent: { bg: '#bee3f8', text: '#2b6cb0' }, Approved: { bg: '#c6f6d5', text: '#2f855a' }, Declined: { bg: '#fed7d7', text: '#c53030' }, Invoiced: { bg: '#f0e6ff', text: '#553c9a'} }; const style = { backgroundColor: colors[status]?.bg, color: colors[status]?.text, padding: '0.25rem 0.6rem', borderRadius: '9999px', fontSize: '0.8rem', fontWeight: '600' }; return <span style={style}>{status}</span>; };
@@ -55,8 +55,8 @@ export default function Dashboard({ user, userData, dashboardStats, handlers }) 
                     </div>
                 </div>
             )}
-            {activeTab === 'clients' && ( /* ... No changes ... */ <div>...</div> )}
-            {activeTab === 'items' && ( /* ... No changes ... */ <div>...</div> )}
+            {activeTab === 'clients' && ( <div>...</div> )}
+            {activeTab === 'items' && ( <div>...</div> )}
         </div>
     );
 }
