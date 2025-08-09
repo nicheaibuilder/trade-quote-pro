@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { auth, db } from './firebaseConfig';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 
 import AuthPage from './components/AuthPage';
 import Dashboard from './pages/Dashboard';
+import QuoteEditor from './pages/QuoteEditor';
 
-// Placeholders for components we will build out next
-const QuoteEditor = ({ onCancel }) => <div style={{padding: '2rem', fontFamily:'Inter'}}><h1 >Quote Editor</h1><p>The full editor for creating quotes would be built here.</p><button onClick={onCancel}>Back to Dashboard</button></div>;
-const ClientPortal = ({ onCancel }) => <div style={{padding: '2rem', fontFamily:'Inter'}}><h1>Client Portal</h1><p>The client-facing page for approving quotes would be built here.</p><button onClick={onCancel}>Back to Dashboard</button></div>;
-const SettingsPage = ({ onCancel }) => <div style={{padding: '2rem', fontFamily:'Inter'}}><h1>Settings</h1><p>The page for updating company branding and profile would be built here.</p><button onClick={onCancel}>Back to Dashboard</button></div>;
-
+// Placeholders for components that would be built out next
+const ClientPortal = ({ onCancel }) => <div style={{padding: '2rem', fontFamily:'Inter'}}><h1>Client Portal</h1><button onClick={onCancel}>Back to Dashboard</button></div>;
+const SettingsPage = ({ onCancel }) => <div style={{padding: '2rem', fontFamily:'Inter'}}><h1>Settings Page</h1><button onClick={onCancel}>Back to Dashboard</button></div>;
 
 function App() {
   const [user, setUser] = useState(null);
@@ -18,7 +17,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   
   const [currentView, setCurrentView] = useState('dashboard');
-  const [activeItemId, setActiveItemId] = useState(null);
+  const [activeQuote, setActiveQuote] = useState(null);
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
@@ -48,26 +47,62 @@ function App() {
 
   // --- HANDLERS ---
   const handleLogout = () => signOut(auth);
-  const handleCreateNewQuote = () => { setActiveItemId(null); setCurrentView('editor'); };
-  const handleSelectQuote = (id) => { setActiveItemId(id); setCurrentView('editor'); };
-  const handleGetClientLink = (id) => { setActiveItemId(id); setCurrentView('clientPortal'); };
-  const handleGoToSettings = () => setCurrentView('settings');
+
+  const handleCreateNewQuote = () => {
+    setActiveQuote({
+      id: Date.now().toString(), quoteNumber: Math.floor(10000 + Math.random() * 90000),
+      clientName: '', clientAddress: '', status: 'Draft',
+      lineItems: []
+    });
+    setCurrentView('editor');
+  };
   
-  const handlers = {
+  const handleSelectQuote = (quoteId) => {
+    const quoteToEdit = userData.quotes.find(q => q.id === quoteId);
+    if (quoteToEdit) { setActiveQuote(quoteToEdit); setCurrentView('editor'); }
+  };
+
+  const handleSaveQuote = async (quoteData) => {
+    const userDocRef = doc(db, "users", user.uid);
+    const existingQuotes = userData.quotes || [];
+    const quoteExists = existingQuotes.some(q => q.id === quoteData.id);
+    
+    const updatedQuotes = quoteExists
+        ? existingQuotes.map(q => q.id === quoteData.id ? quoteData : q)
+        : [...existingQuotes, quoteData];
+    
+    await updateDoc(userDocRef, { quotes: updatedQuotes });
+    setCurrentView('dashboard');
+  };
+  
+  const handleGetClientLink = (quoteId) => {
+    setActiveQuote(userData.quotes.find(q => q.id === quoteId));
+    setCurrentView('clientPortal');
+  };
+  
+  // --- RENDER LOGIC ---
+  const renderView = () => {
+    const handlers = {
+      // CORRECTED LINE BELOW
       onLogout: handleLogout,
       onCreateNewQuote: handleCreateNewQuote,
       onSelectQuote: handleSelectQuote,
       onGetClientLink: handleGetClientLink,
-      onGoToSettings: handleGoToSettings
-  };
+      onGoToSettings: () => setCurrentView('settings'),
+    };
 
-  const renderView = () => {
     switch(currentView) {
-      case 'editor': return <QuoteEditor onCancel={() => setCurrentView('dashboard')} />;
+      case 'editor':
+        return <QuoteEditor 
+                  initialQuoteData={activeQuote}
+                  clients={userData.clients || []}
+                  items={userData.items || []}
+                  onSave={handleSaveQuote}
+                  onCancel={() => setCurrentView('dashboard')}
+               />;
       case 'settings': return <SettingsPage onCancel={() => setCurrentView('dashboard')} />;
       case 'clientPortal': return <ClientPortal onCancel={() => setCurrentView('dashboard')} />;
       default:
-        // The 'handlers' object is now correctly created and passed as a prop
         return <Dashboard 
           user={user} 
           userData={userData} 
