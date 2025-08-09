@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { auth, db } from '../firebaseConfig';
+import { auth, db } from './firebaseConfig';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 
