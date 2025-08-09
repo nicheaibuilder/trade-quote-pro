@@ -14,7 +14,7 @@ export default function CatalogModal({ items = [], onAddItem, onCancel }) {
                             </div>
                             <button onClick={()=>onAddItem(item)} style={{background:'#3182ce', color:'white'}}>+</button>
                         </div>
-                    )) : <p style={{textAlign: 'center', color: '#718096'}}>Your item catalog is empty.</p>}
+                    )) : <p style={{textAlign: 'center', color: '#718096'}}>Your item catalog is empty. Add items from the Dashboard.</p>}
                 </div>
                 <button onClick={onCancel} style={{marginTop:'1.5rem', background:'#a0aec0'}}>Close</button>
             </div>

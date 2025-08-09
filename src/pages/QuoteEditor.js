@@ -1,12 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import CatalogModal from '../components/CatalogModal';
 
-const Input = ({ label, ...props }) => (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <label style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#4a5568' }}>{label}</label>
-        <input {...props} />
-    </div>
-);
+const Input = ({ label, ...props }) => ( <div style={{ display: 'flex', flexDirection: 'column' }}><label style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#4a5568' }}>{label}</label><input {...props} /></div> );
 
 export default function QuoteEditor({ initialQuoteData, clients = [], items = [], onSave, onCancel }) {
     const [quote, setQuote] = useState(initialQuoteData);
@@ -65,7 +60,6 @@ export default function QuoteEditor({ initialQuoteData, clients = [], items = []
                  <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
                     <select onChange={handleClientSelect} defaultValue=""><option value="">-- Select an Existing Client --</option>{clients.map(client => (<option key={client.id} value={client.id}>{client.name}</option>))}</select>
                     <Input label="Or Enter New Client Name" value={quote.clientName} onChange={e => setQuote(p=>({...p, clientName: e.target.value}))} />
-                    <Input label="Or Enter New Client Address" value={quote.clientAddress} onChange={e => setQuote(p=>({...p, clientAddress: e.target.value}))} />
                 </div>
             </div>
 
