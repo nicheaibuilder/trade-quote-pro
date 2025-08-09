@@ -3,7 +3,7 @@ import { auth, db } from '../firebaseConfig';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 
-import AuthPage from '../components/AuthPage';
+import AuthPage from './components/AuthPage';
 import Dashboard from './pages/Dashboard';
 import QuoteEditor from './pages/QuoteEditor';
 // Future placeholders
