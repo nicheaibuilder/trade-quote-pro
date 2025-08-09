@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 
-// A simple reusable input component for our form
 const Input = ({ label, ...props }) => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: '#4a5568' }}>{label}</label>
@@ -8,17 +7,22 @@ const Input = ({ label, ...props }) => (
     </div>
 );
 
-export default function QuoteEditor({ initialQuoteData, onSave, onCancel }) {
+export default function QuoteEditor({ initialQuoteData, clients = [], onSave, onCancel }) {
     const [quote, setQuote] = useState(initialQuoteData);
 
-    const handleClientChange = (field, value) => {
-        setQuote(prev => ({ ...prev, [field]: value }));
+    const handleClientSelect = (e) => {
+        const selectedClientId = e.target.value;
+        const selectedClient = clients.find(c => c.id === selectedClientId);
+        if (selectedClient) {
+            setQuote(prev => ({ ...prev, clientName: selectedClient.name, clientAddress: selectedClient.address }));
+        } else {
+             setQuote(prev => ({ ...prev, clientName: '', clientAddress: '' }));
+        }
     };
 
     const handleItemChange = (itemId, field, value) => {
         const updatedItems = quote.lineItems.map(item => {
             if (item.id === itemId) {
-                // Ensure value is a number for quantity and price
                 const numericValue = (field === 'quantity' || field === 'price') ? parseFloat(value) || 0 : value;
                 return { ...item, [field]: numericValue };
             }
@@ -37,9 +41,8 @@ export default function QuoteEditor({ initialQuoteData, onSave, onCancel }) {
         setQuote(prev => ({ ...prev, lineItems: updatedItems }));
     };
 
-    // Real-time calculations
     const subtotal = useMemo(() => quote.lineItems.reduce((acc, item) => acc + (item.quantity * item.price), 0), [quote.lineItems]);
-    const tax = subtotal * 0.13; // 13% HST for Ontario
+    const tax = subtotal * 0.13;
     const total = subtotal + tax;
 
     return (
@@ -55,16 +58,18 @@ export default function QuoteEditor({ initialQuoteData, onSave, onCancel }) {
                 </div>
             </div>
 
-            {/* Client Section */}
             <div style={{marginBottom:'2rem'}}>
                 <h2 style={{fontSize:'1.25rem'}}>Client Information</h2>
-                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem'}}>
-                    <Input label="Client Name" value={quote.clientName} onChange={e => handleClientChange('clientName', e.target.value)} />
-                    <Input label="Client Address" value={quote.clientAddress} onChange={e => handleClientChange('clientAddress', e.target.value)} />
+                 <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
+                    <select onChange={handleClientSelect} style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e0', background:'white' }}>
+                        <option value="">-- Select an Existing Client --</option>
+                        {clients.map(client => (<option key={client.id} value={client.id}>{client.name}</option>))}
+                    </select>
+                    <Input label="Or Enter New Client Name" value={quote.clientName} onChange={e => setQuote(p=>({...p, clientName: e.target.value}))} />
+                    <Input label="Or Enter New Client Address" value={quote.clientAddress} onChange={e => setQuote(p=>({...p, clientAddress: e.target.value}))} />
                 </div>
             </div>
 
-            {/* Line Items Section */}
             <div>
                 <h2 style={{fontSize:'1.25rem'}}>Line Items</h2>
                 {quote.lineItems.map(item => (
@@ -78,12 +83,11 @@ export default function QuoteEditor({ initialQuoteData, onSave, onCancel }) {
                 <button onClick={handleAddItem} style={{background:'#3182ce', color:'white'}}>+ Add Item</button>
             </div>
             
-            {/* Totals Section */}
             <div style={{marginTop:'2rem', paddingTop:'1.5rem', borderTop:'1px solid #e2e8f0', display:'flex', justifyContent:'flex-end'}}>
                 <div style={{width:'300px', fontSize:'1.1rem'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'0.5rem'}}><span style={{color:'#718096'}}>Subtotal:</span> <strong>${subtotal.toFixed(2)}</strong></div>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'0.5rem'}}><span style={{color:'#718096'}}>Tax (13%):</span> <strong>${tax.toFixed(2)}</strong></div>
-                    <div style={{display:'flex', justifyContent:'space-between', fontWeight:'bold', fontSize:'1.4rem', marginTop:'1rem', paddingTop:'1rem', borderTop:'2px solid black'}}><span >Total:</span> <span>${total.toFixed(2)}</span></div>
+                    <div style={{display:'flex', justifyContent:'space-between', fontWeight:'bold', fontSize:'1.4rem', marginTop:'1rem', paddingTop:'1rem', borderTop:'2px solid black'}}><span>Total:</span> <span>${total.toFixed(2)}</span></div>
                 </div>
             </div>
         </div>
